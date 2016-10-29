@@ -24,6 +24,25 @@ def generate(title, cooked, output)
 		puts "[+] File saved to articles/" + output
 end
 
+class Articles
+	def initialize(dir)
+		@dir = dir
+		filename = "articles.json"
+		@filepath = @dir + "/" + filename
+
+		if ! File.file?(@filepath)
+			File.open(@filepath, "w") {|f| f.write('{"articles":[]}') }
+		end
+
+		@articles = self.loadarticles()
+		puts @articles
+	end
+
+	def loadarticles()
+		farticles = File.open(@filepath).read()
+		return JSON.parse(farticles)["articles"]
+	end
+end
 
 ## This function will take the ID of a post, use the API to retrieve it, and then save the article using generate
 def save(id)
@@ -105,6 +124,8 @@ trap "SIGINT" do
   puts "Bye Bye"
   exit
 end
+
+articles = Articles.new("articles")
 
 loop {
 	puts "Welcome to Pupper - Official 0x00sec Download Tool"
