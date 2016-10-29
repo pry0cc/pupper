@@ -3,6 +3,7 @@ require 'discourse_api'
 require 'highline/import'
 require 'json'
 require 'erb'
+require 'launchy'
 
 # Establishes a Discourse API Object with 0x00sec
 @client = DiscourseApi::Client.new("https://0x00sec.org/")
@@ -124,16 +125,14 @@ def search()
 	puts "What would you like to search for kind sir?"
 	print ">> "
 	query = gets.chomp
-	begin
-		data = @client.search(query)
-	rescue
-		puts "Something went wrong."
-	else
-		print_posts(data["posts"])
-		puts "Which would you like to save? (id)"
-		print ">> "
-		topic_id_to_save = gets.chomp
-		save(topic_id_to_save)
+	if query != ""
+		begin
+			data = @client.search(query)
+		rescue
+			puts "Something went wrong."
+		else
+			print_posts(data["posts"])
+		end
 	end
 end
 
@@ -148,6 +147,15 @@ def downloads()
 	end
 end
 
+def prompt()
+	print "ID >> "
+	id = gets.chomp
+	if id != ""
+		save(id)
+		say("Press enter to return to the main menu")
+		gets.chomp
+	end
+end
 trap "SIGINT" do
 	puts "\nBye Bye"
 	exit
@@ -166,30 +174,33 @@ loop {
 			system("clear")
 			say("Alright Mr Searchy Pants...")
 			search()
-			say("Press enter to return to the main menu")
-			gets.chomp
+			prompt()
 			system("clear")
 		}
 		menu.choice(:Topic) {
 			system("clear")
 			say("Please gimme a Topic ID then...")
-			print ">> "
-			id = gets.chomp
-			save(id)
-			say("Press enter to return to the main menu")
-			gets.chomp
+			prompt()
 			system("clear")
 		}
 		menu.choice(:Latest) {
 			system("clear")
 			say("Outputting Latest Topics")
 			latest()
-			print "Topic ID >> "
-			id = gets.chomp
-			save(id)
-			say("Press enter to return to the main menu")
-			gets.chomp
+			prompt()
 			system("clear")
+		}
+		menu.choice(:Read) {
+			say("Downloaded Articles")
+			downloads()
+			print "ID >> "
+			id = gets.chomp
+			if id != "" || (@articles.return().length > 0)
+				filename = @articles.return()[id.to_i]
+				Launchy.open("articles" + "/" + filename)
+				say("Press enter to return to the main menu")
+				gets.chomp
+			end
 		}
 		menu.choice(:Delete) {
 			system("clear")
@@ -197,9 +208,15 @@ loop {
 			downloads()
 			print "ID >> "
 			id = gets.chomp
-			@articles.delete(@articles.return()[id.to_i])
-			say("Press enter to return to the main menu")
-			gets.chomp
+			if id != "" && (@articles.return().length > 0) && (@articles.return().length > id.to_i)
+				@articles.delete(@articles.return()[id.to_i])
+				say("Press enter to return to the main menu")
+				gets.chomp
+			elsif @articles.return.length == 0
+				say("You don't have any downloaded mate.")
+				say("Press enter to return to the main menu")
+				gets.chomp
+			end
 			system("clear")
 		}
 	end
