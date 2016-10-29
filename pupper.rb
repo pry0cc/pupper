@@ -37,11 +37,11 @@ class Articles
 		end
 
 		@farticles = File.open(@filepath).read()
-		@articles = self.return()
+		@articles = JSON.parse(@farticles)["articles"]
 	end
 
 	def return()
-		return JSON.parse(@farticles)["articles"]
+		return @articles
 	end
 
 	def save()
@@ -54,7 +54,13 @@ class Articles
 	def add(filename)
 		@articles.push(filename)
 		self.save()
-		@articles = self.return()
+	end
+
+	def delete(filename)
+		@articles.delete(filename)
+		self.save()
+		File.delete(@dir + "/" + filename)
+		puts "[-] File Deleted"
 	end
 end
 
@@ -136,6 +142,12 @@ def latest()
 	print_topics(data)
 end
 
+def downloads()
+	for article in @articles.return()
+		puts @articles.return().index(article).to_s + ". " + article
+	end
+end
+
 trap "SIGINT" do
 	puts "\nBye Bye"
 	exit
@@ -175,6 +187,17 @@ loop {
 			print "Topic ID >> "
 			id = gets.chomp
 			save(id)
+			say("Press enter to return to the main menu")
+			gets.chomp
+			system("clear")
+		}
+		menu.choice(:Delete) {
+			system("clear")
+			say("Downloaded Articles")
+			downloads()
+			print "ID >> "
+			id = gets.chomp
+			@articles.delete(@articles.return()[id.to_i])
 			say("Press enter to return to the main menu")
 			gets.chomp
 			system("clear")
