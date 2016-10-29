@@ -11,7 +11,7 @@ require 'erb'
 def generate(title, cooked, output)
 		# Create 'scope' accessible variables (needed for ERB)
 		@title = title
-		@cooked = cooked
+		@cooked = cooked.sub('src="//','src="https://')
 
 		# Import the post.html template file (its an ERB really)
 		template = File.open("post.erb", "r").read()
@@ -83,17 +83,27 @@ def search()
 	end
 end
 
-puts "Welcome to Pupper - Official 0x00sec Download Tool"
-puts "Name courtesy of oaktree"
-puts "Software concieved by pry0cc"
-puts ""
+trap "SIGINT" do
+	puts ""
+  puts "Bye Bye"
+  exit
+end
+
 loop {
+	puts "Welcome to Pupper - Official 0x00sec Download Tool"
+	puts "Name courtesy of oaktree"
+	puts "Software concieved by pry0cc"
+	puts ""
+
 	choose do |menu|
 		menu.prompt = "Pick an option, any option..."
 
 		menu.choice(:Search) {
 			say("Alright Mr Searchy Pants...")
 			search()
+			say("Press enter to return to the main menu")
+			gets.chomp
+			system("clear")
 		}
 		menu.choice(:Topic) {
 			say("Please gimme a Topic ID then...")
