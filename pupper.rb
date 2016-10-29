@@ -3,6 +3,7 @@ require 'discourse_api'
 require 'highline/import'
 require 'json'
 require 'erb'
+require 'pry'
 
 # Establishes a Discourse API Object with 0x00sec
 @client = DiscourseApi::Client.new("https://0x00sec.org/")
@@ -20,7 +21,6 @@ def generate(title, cooked, output)
 	result = ERB.new(template).result()
 
 	# Save it to a new file in templates
-	FileUtils.mkdir_p("articles/") unless Dir.exists?("articles/")
 	File.open("articles/" + output, "w") { |file| file.write(result) }
 	puts "[+] File saved to articles/" + output
 end
@@ -31,10 +31,8 @@ class Articles
 		filename = "articles.json"
 		@filepath = @dir + "/" + filename
 
-
-		if ! File.file?(@filepath)
-			File.open(@filepath, "w") {|f| f.write('{"articles":[]}') }
-		end
+		FileUtils.mkdir_p(@dir) unless Dir.exists?(@dir)
+		File.open(@filepath, "w") {|f| f.write('{"articles":[]}')} unless File.file?(@filepath)
 
 		@farticles = File.open(@filepath).read()
 		@articles = JSON.parse(@farticles)["articles"]
