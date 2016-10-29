@@ -195,7 +195,7 @@ loop {
 			downloads()
 			print "ID >> "
 			id = gets.chomp
-			if id != "" || (@articles.return().length > 0)
+			if id != "" && (@articles.return().length > 0) && (@articles.return().length > id.to_i)
 				filename = @articles.return()[id.to_i]
 				Launchy.open("articles" + "/" + filename)
 				say("Press enter to return to the main menu")
