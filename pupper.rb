@@ -12,7 +12,7 @@ require 'pry'
 def generate(title, cooked, output)
 	# Create 'scope' accessible variables (needed for ERB)
 	@title = title
-	@cooked = cooked.sub('src="//','src="https://')
+	@cooked = cooked.gsub('src="//','src="https://')
 
 	# Import the post.html template file (its an ERB really)
 	template = File.open("post.erb", "r").read()
