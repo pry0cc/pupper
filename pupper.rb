@@ -59,6 +59,25 @@ def topic(id = 0)
 	end
 end
 
+def print_posts(posts)
+	printf "%-5s %-15s %-20s\n", "ID", "Username", "Title"
+	for post in posts
+		post_data_raw = @client.topic(post["topic_id"])
+		post_data = post_data_raw["post_stream"]["posts"][0]
+		# puts JSON.generate(post_data)
+		printf "%-5s %-15s %-20s\n", post["topic_id"].to_s, post_data["username"], post_data_raw["title"]
+	end
+end
+
+def print_topics(topics)
+	printf "%-5s %-15s %-20s\n", "ID", "Username", "Title"
+	for topic in topics
+		topic_data_raw = @client.topic(topic["id"])
+		topic_data = topic_data_raw["post_stream"]["posts"][0]
+		printf "%-5s %-15s %-20s\n", topic["id"].to_s, topic_data["username"], topic_data_raw["title"]
+	end
+end
+
 def search()
 	puts "What would you like to search for kind sir?"
 	print ">> "
@@ -68,19 +87,17 @@ def search()
 	rescue
 		puts "Something went wrong."
 	else
-		posts = data["posts"]
-		printf "%-5s %-15s %-20s\n", "ID", "Username", "Title"
-		for post in posts
-			post_data_raw = @client.topic(post["topic_id"])
-			post_data = post_data_raw["post_stream"]["posts"][0]
-			# puts JSON.generate(post_data)
-			printf "%-5s %-15s %-20s\n", post["topic_id"].to_s, post_data["username"], post_data_raw["title"]
-		end
+		print_posts(data["posts"])
 		puts "Which would you like to save? (id)"
 		print ">> "
 		topic_id_to_save = gets.chomp
 		save(topic_id_to_save)
 	end
+end
+
+def latest()
+	data = @client.latest_topics()
+	print_topics(data)
 end
 
 trap "SIGINT" do
@@ -99,6 +116,7 @@ loop {
 		menu.prompt = "Pick an option, any option..."
 
 		menu.choice(:Search) {
+			system("clear")
 			say("Alright Mr Searchy Pants...")
 			search()
 			say("Press enter to return to the main menu")
@@ -106,11 +124,25 @@ loop {
 			system("clear")
 		}
 		menu.choice(:Topic) {
+			system("clear")
 			say("Please gimme a Topic ID then...")
 			print ">> "
 			id = gets.chomp
-			puts id
 			save(id)
+			say("Press enter to return to the main menu")
+			gets.chomp
+			system("clear")
+		}
+		menu.choice(:Latest) {
+			system("clear")
+			say("Outputting Latest Topics")
+			latest()
+			print "Topic ID >> "
+			id = gets.chomp
+			save(id)
+			say("Press enter to return to the main menu")
+			gets.chomp
+			system("clear")
 		}
 	end
 }
