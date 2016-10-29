@@ -5,3 +5,4 @@ source "https://rubygems.org"
 gem 'highline'
 gem 'discourse_api'
 gem 'launchy'
+gem 'nokogiri'
