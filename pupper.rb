@@ -31,19 +31,34 @@ class Articles
 		filename = "articles.json"
 		@filepath = @dir + "/" + filename
 
+
 		if ! File.file?(@filepath)
 			File.open(@filepath, "w") {|f| f.write('{"articles":[]}') }
 		end
 
-		@articles = self.loadarticles()
-		puts @articles
+		@farticles = File.open(@filepath).read()
+		@articles = self.return()
 	end
 
-	def loadarticles()
-		farticles = File.open(@filepath).read()
-		return JSON.parse(farticles)["articles"]
+	def return()
+		return JSON.parse(@farticles)["articles"]
+	end
+
+	def save()
+		tmp = {}
+		tmp["articles"] = @articles
+
+		File.open(@filepath, "w") {|f| f.write(JSON.generate(tmp)) }
+	end
+
+	def add(filename)
+		@articles.push(filename)
+		self.save()
+		@articles = self.return()
 	end
 end
+
+@articles = Articles.new("articles")
 
 ## This function will take the ID of a post, use the API to retrieve it, and then save the article using generate
 def save(id)
@@ -55,6 +70,7 @@ def save(id)
 	filename = data["slug"] + ".html"
 
 	# Does all the heavy lifting
+	@articles.add(filename)
 	generate(title, cooked, filename)
 end
 
@@ -125,12 +141,11 @@ trap "SIGINT" do
 	exit
 end
 
-articles = Articles.new("articles")
-
 loop {
 	puts "Welcome to Pupper - Official 0x00sec Download Tool"
 	puts "Name courtesy of oaktree"
 	puts "Software concieved by pry0cc\n"
+	puts "Downloaded Articles: " + @articles.return().to_s
 
 	choose do |menu|
 		menu.prompt = "Pick an option, any option..."
