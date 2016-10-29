@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    coderay (1.1.1)
     discourse_api (0.13.0)
       faraday (~> 0.9)
       faraday_middleware (~> 0.10)
@@ -10,8 +11,14 @@ GEM
     faraday_middleware (0.10.0)
       faraday (>= 0.7.4, < 0.10)
     highline (1.7.8)
+    method_source (0.8.2)
     multipart-post (2.0.0)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     rack (1.6.4)
+    slop (3.6.0)
 
 PLATFORMS
   ruby
@@ -19,6 +26,7 @@ PLATFORMS
 DEPENDENCIES
   discourse_api
   highline
+  pry
 
 BUNDLED WITH
    1.12.5

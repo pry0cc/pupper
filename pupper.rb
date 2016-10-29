@@ -12,7 +12,7 @@ require 'launchy'
 def generate(title, cooked, output)
 	# Create 'scope' accessible variables (needed for ERB)
 	@title = title
-	@cooked = cooked.sub('src="//','src="https://')
+	@cooked = cooked.gsub('src="//','src="https://')
 
 	# Import the post.html template file (its an ERB really)
 	template = File.open("post.erb", "r").read()
@@ -21,7 +21,6 @@ def generate(title, cooked, output)
 	result = ERB.new(template).result()
 
 	# Save it to a new file in templates
-	FileUtils.mkdir_p("articles/") unless Dir.exists?("articles/")
 	File.open("articles/" + output, "w") { |file| file.write(result) }
 	puts "[+] File saved to articles/" + output
 end
@@ -32,10 +31,8 @@ class Articles
 		filename = "articles.json"
 		@filepath = @dir + "/" + filename
 
-
-		if ! File.file?(@filepath)
-			File.open(@filepath, "w") {|f| f.write('{"articles":[]}') }
-		end
+		FileUtils.mkdir_p(@dir) unless Dir.exists?(@dir)
+		File.open(@filepath, "w") {|f| f.write('{"articles":[]}')} unless File.file?(@filepath)
 
 		@farticles = File.open(@filepath).read()
 		@articles = JSON.parse(@farticles)["articles"]
