@@ -4,4 +4,4 @@ source "https://rubygems.org"
 # gem "rails"
 gem 'highline'
 gem 'discourse_api'
-gem 'pry'
+gem 'launchy'
