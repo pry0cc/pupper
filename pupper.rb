@@ -18,7 +18,13 @@ def generate(title, cooked, output)
 	@title = title
 	@cooked = cooked.gsub('img src="//','img src="https://')
 
-	html = Nokogiri::HTML(@cooked)
+	# Import the post.html template file (its an ERB really)
+	template = File.open("post.erb", "r").read()
+
+	# Render the post.html ERB
+	result = ERB.new(template).result()
+
+	html = Nokogiri::HTML(result)
 
 	images = html.css("img")
 
@@ -27,16 +33,10 @@ def generate(title, cooked, output)
 		image["src"] = "data:image/jpg;base64," + base64
 	end
 
- 	localfied = html.to_html
-
-	# Import the post.html template file (its an ERB really)
-	template = File.open("post.erb", "r").read()
-
-	# Render the post.html ERB
-	result = ERB.new(localfied).result()
+	localfied = html.to_html
 
 	# Save it to a new file in templates
-	File.open("articles/" + output, "w") { |file| file.write(result) }
+	File.open("articles/" + output, "w") { |file| file.write(localfied) }
 	puts "[+] File saved to articles/" + output
 end
 
