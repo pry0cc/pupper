@@ -4,56 +4,57 @@ require 'highline/import'
 require 'json'
 require 'erb'
 
+# Establishes a Discourse API Object with 0x00sec
 @client = DiscourseApi::Client.new("https://0x00sec.org/")
 
+## Function to take the data from the article, and render it in a html file
 def generate(title, cooked, output)
+		# Create 'scope' accessible variables (needed for ERB)
 		@title = title
 		@cooked = cooked
-		cooked = "hello!"
-		template = File.open("template/post.html", "r").read()
+
+		# Import the post.html template file (its an ERB really)
+		template = File.open("post.erb", "r").read()
+
+		# Render the post.html ERB
 		result = ERB.new(template).result()
-		File.open("template/" + output, "w") { |file| file.write(result) }
+
+		# Save it to a new file in templates
+		File.open("articles/" + output, "w") { |file| file.write(result) }
+		puts "[+] File saved to articles/" + output
 end
 
+
+## This function will take the ID of a post, use the API to retrieve it, and then save the article using generate
 def save(id)
+	# Declare all variables + access data required for html generation
 	data = topic(id)
 	username = data["post_stream"]["posts"][0]["username"]
 	cooked = data["post_stream"]["posts"][0]["cooked"]
 	title = data["title"]
 	filename = data["slug"] + ".html"
-	generate(title, cooked, filename)
 
+	# Does all the heavy lifting
+	generate(title, cooked, filename)
 end
 
+
+## This function uses the API to retrieve and output the articles infomation
 def topic(id = 0)
+
 	if id == 0
-		puts "Hello there! Whats the ID you were looking for?"
-		print ">> "
-		id = gets.chomp
-		begin
-			post_data_raw = @client.topic(id)
-		rescue
-			puts "Hmm. Doesn\'t seem to exist"
-		else
-			post_data = post_data_raw["post_stream"]["posts"][0]
-			if post_data_raw.length > 0
-				puts "Found something!"
-				printf "%-5s %-15s %-20s\n", id.to_s, post_data["username"], post_data_raw["title"]
-			else
-				puts "Hm. Nothing..."
-			end
-		end
+		puts "You have to actually supply an ID..."
+	end
+
+	begin
+		post_data_raw = @client.topic(id)
+	rescue
+		puts "Hmm. Doesn\'t seem to exist"
 	else
-		begin
-			post_data_raw = @client.topic(id)
-		rescue
-			puts "Hmm. Doesn\'t seem to exist"
+		if post_data_raw.length > 0
+			return post_data_raw
 		else
-			if post_data_raw.length > 0
-				return post_data_raw
-			else
-				puts "Hm. Nothing..."
-			end
+			puts "Hm. Nothing..."
 		end
 	end
 end
@@ -95,13 +96,11 @@ loop {
 			search()
 		}
 		menu.choice(:Topic) {
-			say("Woah, you really know what you want")
-			topic()
-		}
-
-		menu.choice(:Save) {
-			say("Hell0!")
-			save(991)
+			say("Please gimme a Topic ID then...")
+			print ">> "
+			id = gets.chomp
+			puts id
+			save(id)
 		}
 	end
 }
