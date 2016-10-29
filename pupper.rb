@@ -4,6 +4,10 @@ require 'highline/import'
 require 'json'
 require 'erb'
 require 'launchy'
+require 'rubygems'
+require 'open-uri'
+require 'nokogiri'
+require 'base64'
 
 # Establishes a Discourse API Object with 0x00sec
 @client = DiscourseApi::Client.new("https://0x00sec.org/")
@@ -12,13 +16,24 @@ require 'launchy'
 def generate(title, cooked, output)
 	# Create 'scope' accessible variables (needed for ERB)
 	@title = title
-	@cooked = cooked.gsub('src="//','src="https://')
+	@cooked = cooked.gsub('img src="//','img src="https://')
+
+	html = Nokogiri::HTML(@cooked)
+
+	images = html.css("img")
+
+	for image in images
+		base64 = Base64.encode64(open(image["src"]).read())
+		image["src"] = "data:image/jpg;base64," + base64
+	end
+
+ 	localfied = html.to_html
 
 	# Import the post.html template file (its an ERB really)
 	template = File.open("post.erb", "r").read()
 
 	# Render the post.html ERB
-	result = ERB.new(template).result()
+	result = ERB.new(localfied).result()
 
 	# Save it to a new file in templates
 	File.open("articles/" + output, "w") { |file| file.write(result) }
