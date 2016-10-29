@@ -9,19 +9,20 @@ require 'erb'
 
 ## Function to take the data from the article, and render it in a html file
 def generate(title, cooked, output)
-		# Create 'scope' accessible variables (needed for ERB)
-		@title = title
-		@cooked = cooked.sub('src="//','src="https://')
+	# Create 'scope' accessible variables (needed for ERB)
+	@title = title
+	@cooked = cooked.sub('src="//','src="https://')
 
-		# Import the post.html template file (its an ERB really)
-		template = File.open("post.erb", "r").read()
+	# Import the post.html template file (its an ERB really)
+	template = File.open("post.erb", "r").read()
 
-		# Render the post.html ERB
-		result = ERB.new(template).result()
+	# Render the post.html ERB
+	result = ERB.new(template).result()
 
-		# Save it to a new file in templates
-		File.open("articles/" + output, "w") { |file| file.write(result) }
-		puts "[+] File saved to articles/" + output
+	# Save it to a new file in templates
+	FileUtils.mkdir_p("articles/") unless Dir.exists?("articles/")
+	File.open("articles/" + output, "w") { |file| file.write(result) }
+	puts "[+] File saved to articles/" + output
 end
 
 
@@ -101,16 +102,14 @@ def latest()
 end
 
 trap "SIGINT" do
-	puts ""
-  puts "Bye Bye"
-  exit
+	puts "\nBye Bye"
+	exit
 end
 
 loop {
 	puts "Welcome to Pupper - Official 0x00sec Download Tool"
 	puts "Name courtesy of oaktree"
-	puts "Software concieved by pry0cc"
-	puts ""
+	puts "Software concieved by pry0cc\n"
 
 	choose do |menu|
 		menu.prompt = "Pick an option, any option..."
