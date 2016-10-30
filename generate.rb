@@ -5,8 +5,6 @@ require 'open-uri'
 require 'nokogiri'
 require 'base64'
 
-require 'pry'
-
 module Pupper
 	## Function to take the data from the article, and render it in a html file
 	def self.generate(title, cooked, output)
@@ -19,7 +17,6 @@ module Pupper
 
 		# Render the post.html ERB
 		result = ERB.new(template).result()
-		puts result
 		html = Nokogiri::HTML(result)
 		images = html.css("img")
 
