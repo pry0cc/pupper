@@ -26,6 +26,8 @@ trap "SIGINT" do
 	exit
 end
 
+system("clear")
+
 loop do
 	puts "Welcome to Pupper - Official 0x00sec Download Tool"
 	puts "Name courtesy of oaktree"

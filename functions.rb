@@ -11,10 +11,13 @@ module Pupper
 		cooked = data["post_stream"]["posts"][0]["cooked"]
 		title = data["title"]
 		filename = data["slug"] + ".html"
-
+		if ! articles.return().include?(filename)
 		# Does all the heavy lifting
-		articles.add(filename)
-		Pupper.generate(title, cooked, filename)
+			articles.add(filename)
+			Pupper.generate(title, cooked, filename)
+		else
+			puts "Already downloaded!"
+		end
 	end
 
 	## This function uses the API to retrieve and output the articles infomation
