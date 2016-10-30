@@ -11,17 +11,16 @@ module Pupper
 	## Function to take the data from the article, and render it in a html file
 	def self.generate(title, cooked, output)
 		# Create 'scope' accessible variables (needed for ERB)
-		@title = title
-		@cooked = cooked.gsub('img src="//','img src="https://')
+		$title = title
+		$cooked = cooked.gsub('img src="//','img src="https://')
 
 		# Import the post.html template file (its an ERB really)
 		template = File.open("post.erb", "r").read()
 
 		# Render the post.html ERB
 		result = ERB.new(template).result()
-
+		puts result
 		html = Nokogiri::HTML(result)
-
 		images = html.css("img")
 
 		for image in images

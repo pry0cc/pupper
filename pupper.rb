@@ -17,6 +17,9 @@ require './functions.rb'
 # Establishes a Discourse API Object with 0x00sec
 @client = DiscourseApi::Client.new("https://0x00sec.org/")
 @articles = Pupper::Articles.new("articles")
+$title = ""
+$cooked = ""
+
 
 trap "SIGINT" do
 	puts "\nBye Bye"
