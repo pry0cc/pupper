@@ -44,6 +44,13 @@ loop do
 			Pupper.prompt(@articles, @client)
 			system("clear")
 		end
+		menu.choice(:User) do
+			system("clear")
+			say("Alright Mr Searchy Pants...")
+			Pupper.user_topics(@client)
+			Pupper.prompt(@articles, @client)
+			system("clear")
+		end
 		menu.choice(:Topic) do
 			system("clear")
 			say("Please gimme a Topic ID then...")

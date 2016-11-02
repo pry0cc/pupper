@@ -52,10 +52,26 @@ module Pupper
 		end
 	end
 
+	def self.user_topics(client)
+		print "Who's articles would you like to search for sir?\n>> "
+		query = gets.chomp
+		if query != ""
+			begin
+				data = client.topics_by(query)
+			rescue
+				puts "Something went wrong."
+			else
+				Pupper.print_user_topics(data, client)
+			end
+		end
+	end
+
+
 	def self.latest(client)
 		data = client.latest_topics()
 		Pupper.print_topics(data, client)
 	end
+
 
 	def self.downloads(articles)
 		for article in articles.return()
