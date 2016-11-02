@@ -64,6 +64,12 @@ loop do
 			Pupper.prompt(@articles, @client)
 			system("clear")
 		end
+		menu.choice(:Snapshot) do
+			system("clear")
+			say("Snapshotting Latest Topics")
+			Pupper.snapshot(@client, @articles)
+			system("clear")
+		end
 		menu.choice(:Read) do
 			say("Downloaded Articles")
 			Pupper.downloads(@articles)

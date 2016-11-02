@@ -66,6 +66,12 @@ module Pupper
 		end
 	end
 
+	def self.snapshot(client, articles)
+		data = client.latest_topics()
+		for topic in data
+			self.save(topic["id"], articles, client)
+		end
+	end
 
 	def self.latest(client)
 		data = client.latest_topics()
