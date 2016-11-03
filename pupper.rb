@@ -20,6 +20,7 @@ require './functions.rb'
 $title = ""
 $cooked = ""
 
+$post_buffer = []
 
 trap "SIGINT" do
 	puts "\nBye Bye"
@@ -33,6 +34,7 @@ loop do
 	puts "Name courtesy of oaktree"
 	puts "Software concieved by pry0cc\n"
 	puts "Downloaded Articles: " + @articles.return().to_s
+	puts "Post Buffer " + $post_buffer.to_s
 
 	choose do |menu|
 		menu.prompt = "Pick an option, any option..."
@@ -59,15 +61,16 @@ loop do
 		end
 		menu.choice(:Latest) do
 			system("clear")
-			say("Outputting Latest Topics")
+			say("Outputting Latest Topics\n")
 			Pupper.latest(@client)
 			Pupper.prompt(@articles, @client)
 			system("clear")
 		end
-		menu.choice(:Snapshot) do
+		menu.choice(:Categories) do
 			system("clear")
-			say("Snapshotting Latest Topics")
-			Pupper.snapshot(@client, @articles)
+			say("Printing Categories\n")
+			Pupper.categories(@client)
+			Pupper.prompt(@articles, @client)
 			system("clear")
 		end
 		menu.choice(:Read) do
