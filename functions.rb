@@ -78,6 +78,18 @@ module Pupper
 		Pupper.print_topics(data, client)
 	end
 
+	def self.categories(client)
+		data = client.categories()
+		# Pupper.print_topics(data, client)
+		Pupper.print_categories(data)
+		print "Category Slug >> "
+		slug = gets.chomp
+
+		if slug != ""
+			data = client.category_latest_topics(category_slug: slug)
+			Pupper.print_topics(data, client)
+		end
+	end
 
 	def self.downloads(articles)
 		for article in articles.return()
@@ -85,13 +97,25 @@ module Pupper
 		end
 	end
 
+	def self.save_all(id_buffer, articles, client)
+		for id in id_buffer
+			save(id, articles, client)
+		end
+	end
+
 	def self.prompt(articles, client)
 		print "ID >> "
 		id = gets.chomp
 		if id != ""
-			self.save(id, articles, client)
-			say("Press enter to return to the main menu")
-			gets.chomp
+			if id == "all"
+				self.save_all($post_buffer, articles, client)
+				say("Press enter to return to the main menu")
+				gets.chomp
+			else
+				self.save(id, articles, client)
+				say("Press enter to return to the main menu")
+				gets.chomp
+			end
 		end
 	end
 
