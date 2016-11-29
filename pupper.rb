@@ -33,8 +33,8 @@ loop do
 	puts "Welcome to Pupper - Official 0x00sec Download Tool"
 	puts "Name courtesy of oaktree"
 	puts "Software concieved by pry0cc\n"
-	puts "Downloaded Articles: " + @articles.return().to_s
-	puts "Post Buffer " + $post_buffer.to_s
+	puts "Downloaded Articles: " + @articles.return().length.to_s
+	# puts "Post Buffer " + $post_buffer.to_s
 
 	choose do |menu|
 		menu.prompt = "Pick an option, any option..."
@@ -74,16 +74,8 @@ loop do
 			system("clear")
 		end
 		menu.choice(:Read) do
-			say("Downloaded Articles")
-			Pupper.downloads(@articles)
-			print "ID >> "
-			id = gets.chomp
-			if id != "" && (@articles.return().length > 0) && (@articles.return().length > id.to_i)
-				filename = @articles.return()[id.to_i]
-				Launchy.open("articles" + "/" + filename)
-				say("Press enter to return to the main menu")
-				gets.chomp
-			end
+			Pupper.generate_menu(@articles)
+			Launchy.open("articles/index.html")
 		end
 		menu.choice(:Delete) do
 			system("clear")

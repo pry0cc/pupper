@@ -7,14 +7,22 @@ module Pupper
 	def self.save(id, articles, client)
 		# Declare all variables + access data required for html generation
 		data = self.topic(client, id)
+		category = client.category(data["category_id"])["slug"]
 		username = data["post_stream"]["posts"][0]["username"]
 		cooked = data["post_stream"]["posts"][0]["cooked"]
 		title = data["title"]
 		filename = data["slug"] + ".html"
-		if ! articles.return().include?(filename)
+		if ! articles.return().include?(category + "/" + filename)
 		# Does all the heavy lifting
-			articles.add(filename)
-			Pupper.generate(title, cooked, filename)
+			articles.add(category + "/" + filename)
+			begin
+				Pupper.generate(title, cooked, filename, category)
+			rescue => e
+				puts "Post generation went awfully wrong."
+				puts e
+			else
+				return 'worked'
+			end
 		else
 			puts "Already downloaded!"
 		end
@@ -95,12 +103,18 @@ module Pupper
 		for article in articles.return()
 			puts articles.return().index(article).to_s + ". " + article
 		end
+		#Pupper.generate_menu(articles)
 	end
+
 
 	def self.save_all(id_buffer, articles, client)
 		for id in id_buffer
-			save(id, articles, client)
+			Thread.start {
+				save(id, articles, client)
+			sleep 0.3
+			}
 		end
+		puts "Articles Downloading... - Will do so in Background"
 	end
 
 	def self.prompt(articles, client)
@@ -108,12 +122,23 @@ module Pupper
 		id = gets.chomp
 		if id != ""
 			if id == "all"
-				self.save_all($post_buffer, articles, client)
-				say("Press enter to return to the main menu")
+				begin
+					self.save_all($post_buffer, articles, client)
+				rescue
+					say("Something went awfully wrong...")
+				else
+					say("Press enter to return to the main menu")
+				end
 				gets.chomp
 			else
-				self.save(id, articles, client)
-				say("Press enter to return to the main menu")
+				begin
+					self.save(id, articles, client)
+				rescue => e
+					say("Something went awfully wrong")
+					say(e)
+				else
+					say("Press enter to return to the main menu")
+				end
 				gets.chomp
 			end
 		end
