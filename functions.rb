@@ -109,8 +109,12 @@ module Pupper
 
 	def self.save_all(id_buffer, articles, client)
 		for id in id_buffer
-			save(id, articles, client)
+			Thread.start {
+				save(id, articles, client)
+			sleep 0.3
+			}
 		end
+		puts "Articles Downloading... - Will do so in Background"
 	end
 
 	def self.prompt(articles, client)

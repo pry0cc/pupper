@@ -33,8 +33,8 @@ loop do
 	puts "Welcome to Pupper - Official 0x00sec Download Tool"
 	puts "Name courtesy of oaktree"
 	puts "Software concieved by pry0cc\n"
-	puts "Downloaded Articles: " + @articles.return().to_s
-	puts "Post Buffer " + $post_buffer.to_s
+	puts "Downloaded Articles: " + @articles.return().length.to_s
+	# puts "Post Buffer " + $post_buffer.to_s
 
 	choose do |menu|
 		menu.prompt = "Pick an option, any option..."
