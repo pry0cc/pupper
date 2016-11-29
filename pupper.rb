@@ -74,16 +74,8 @@ loop do
 			system("clear")
 		end
 		menu.choice(:Read) do
-			say("Downloaded Articles")
-			Pupper.downloads(@articles)
-			print "ID >> "
-			id = gets.chomp
-			if id != "" && (@articles.return().length > 0) && (@articles.return().length > id.to_i)
-				filename = @articles.return()[id.to_i]
-				Launchy.open("articles" + "/" + filename)
-				say("Press enter to return to the main menu")
-				gets.chomp
-			end
+			Pupper.generate_menu(@articles)
+			Launchy.open("articles/index.html")
 		end
 		menu.choice(:Delete) do
 			system("clear")
