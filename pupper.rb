@@ -20,6 +20,7 @@ require './functions.rb'
 $title = ""
 $cooked = ""
 
+
 $post_buffer = []
 
 trap "SIGINT" do
@@ -76,6 +77,9 @@ loop do
 		menu.choice(:Read) do
 			Pupper.generate_menu(@articles)
 			Launchy.open("articles/index.html")
+		end
+		menu.choice(:Server) do
+			Pupper.update_serv(@articles, @client)
 		end
 		menu.choice(:Delete) do
 			system("clear")

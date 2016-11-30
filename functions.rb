@@ -86,8 +86,29 @@ module Pupper
 		Pupper.print_topics(data, client)
 	end
 
+	def self.update_serv(articles, client)
+		loop {
+			puts "[*] Starting to locate articles"
+			data = client.latest_topics()
+			Pupper.print_topics(data, client)
+			puts "[+] Starting to Download articles."
+			begin
+				puts $post_buffer
+				self.save_all($post_buffer, articles, client)
+			rescue
+				puts "Something went wrong. Whoops."
+			else
+				puts "HAHA IT WORKED"
+			end
+			Pupper.generate_menu(articles)
+			puts "[.] Waiting 6 hours to do all over again."
+		sleep 36000
+		}
+		
+	end
+
 	def self.categories(client)
-		data = client.categories()
+		data = client.categories({})
 		# Pupper.print_topics(data, client)
 		Pupper.print_categories(data)
 		print "Category Slug >> "
@@ -109,12 +130,8 @@ module Pupper
 
 	def self.save_all(id_buffer, articles, client)
 		for id in id_buffer
-			Thread.start {
-				save(id, articles, client)
-			sleep 0.3
-			}
+			save(id, articles, client)
 		end
-		puts "Articles Downloading... - Will do so in Background"
 	end
 
 	def self.prompt(articles, client)
