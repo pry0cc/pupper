@@ -7,7 +7,7 @@
 ## Commands/Features
 
 | Command/Feature | Description |
-|-|-|
+|---|----|
 | Search | Search for an article with specific keywords. |
 | User | Outputs all of a certain user's topics. |
 | Topic | Expects the ID (number) of a topic. Downloads that topic if it exists. |
