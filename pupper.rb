@@ -8,6 +8,7 @@ require 'rubygems'
 require 'open-uri'
 require 'nokogiri'
 require 'base64'
+require 'fileutils'
 
 require './articles.rb'
 require './generate.rb'
